@@ -1,0 +1,23 @@
+{
+  "name": "zhip",
+  "version": "1.0.0",
+  "description": "NodeJS in-memory cache",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --harmony `which mocha`"
+  },
+  "author": "Kirk Gordon<kirk7880@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "mocha": "^2.1.0"
+  },
+  "dependencies": {
+    "hashtable": "^0.5.3",
+    "node-discovery": "^0.2.1-1",
+    "polo": "^0.7.1",
+    "xxhash": "^0.2.1",
+    "zerorpc": "^0.9.3",
+    "zmq": "^2.10.0"
+  }
+}
