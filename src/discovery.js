@@ -12,6 +12,18 @@ var Discovery = function(options) {
         throw new Error('Invalid configuration provided!');
     }
 
+    if (typeof (options.host) === 'undefined') {
+        throw new Error('Please specify the IP this server is bound to');
+    }
+
+    if (typeof (options.name) === 'undefined') {
+        throw new Error('Please specify a name for this service');
+    }
+
+    if (typeof (options.port) === 'undefined') {
+        throw new Error('Please specify a port to bind to');
+    }
+
     this.options = options;
     this.apps = polo();
     this.peers = [];
@@ -21,7 +33,7 @@ var Discovery = function(options) {
 
 Discovery.prototype.bind = function() {
     this.apps.once('up', function(name, service) {
-        if (this.apps.get(host) !== this.options)
+        if (this.apps.get(host) !== this.options.host)
         console.log(apps.get(name));
     });
 };
