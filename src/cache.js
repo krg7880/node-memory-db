@@ -1,7 +1,7 @@
 'use strict';
 
-const _private = new require(__dirname + '/private')();
-const Item = require(__dirname + '/item');
+var _private = new require(__dirname + '/private')();
+var Item = require(__dirname + '/item');
 
 /**
 * Default cache size to use which
@@ -9,7 +9,7 @@ const Item = require(__dirname + '/item');
 *
 * @type {Number} Bytes
 */
-const DEFAULT_CACHE_SIZE = 20000000;
+var DEFAULT_CACHE_SIZE = 20000000;
 
 var map = new Map();
 
