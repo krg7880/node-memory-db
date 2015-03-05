@@ -13,6 +13,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
+    "dnode": "^1.2.0",
     "hashtable": "^0.5.3",
     "node-discovery": "^0.2.1-1",
     "polo": "^0.7.1",

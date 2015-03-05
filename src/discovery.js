@@ -32,8 +32,9 @@ var Discovery = function(options) {
 };
 
 Discovery.prototype.bind = function() {
+    var self = this;
     this.apps.once('up', function(name, service) {
-        if (this.apps.get(host) !== this.options.host)
+        if (self.apps.get('host') !== self.options.host)
         console.log(apps.get(name));
     });
 };

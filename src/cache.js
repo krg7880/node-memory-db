@@ -91,11 +91,9 @@ LRUCache.prototype.put = LRUCache.prototype.set = function(key, item, ttl) {
 * @returns {*}
 */
 LRUCache.prototype.get = function(key) {
-  if (!this.exists(key)) {
-      return null;
-  }
-
   var item = map.get(key);
+
+  if (!item) return null;
   item.accessCount += 1;
 
   return item;
@@ -200,3 +198,4 @@ LRUCache.prototype.size = function() {
 };
 
 module.exports = LRUCache;
+
