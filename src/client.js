@@ -1,11 +1,19 @@
 var zmq = require('zmq');
-var numClients = 40;
-var maxRequests = 100000;
+var numClients = 1;
+var maxRequests = 10000;
 var clients = [];
 var i=0;
 var host = "tcp://127.0.0.1:8009"
 var count = 0;
-process.setMaxListeners(10000)
+process.setMaxListeners(10000);
+
+function bufferize(data) {
+  var str = typeof data !== 'string' ? JSON.stringify(data) : data;
+  var buffer = new Buffer(Buffer.byteLength(str));
+  buffer.write(str);
+
+  return buffer;
+}
 
 var Client = function(options) {
   if (!(this instanceof Client)) {
@@ -25,13 +33,31 @@ var Client = function(options) {
 
 Client.prototype.onMessage = function(data) {
   if (++count >= maxRequests) {
-    console.log('client:data', data);
+    console.log('client:data', data.toString());
     process.exit();
   }
 };
 
 Client.prototype.send = function(data) {
   this.socket.send(data);
+};
+
+Client.prototype.get = function(key) {
+  var obj = {
+    cmd: 'get'
+    ,args: [key]
+  };
+
+  this.send(bufferize(obj));
+};
+
+Client.prototype.put = Client.prototype.set = function(key, data, ttl) {
+  var obj = {
+    cmd: 'set'
+    ,args: [key, data, ttl]
+  };
+
+  this.send(bufferize(obj));
 };
  
 
@@ -43,9 +69,7 @@ for (i; i<numClients; i++) {
   clients.push(c);
 }
 
-var json = JSON.stringify({name: 'kirk'});
-var data = new Buffer(Buffer.byteLength(json));
-data.write(json);
+var data = "1";
 
 var cur = -1;
 var getIdx = function() {
@@ -59,5 +83,5 @@ var getIdx = function() {
 }
 
 for (var j=0; j<maxRequests; j++) {
-  clients[getIdx()].send(data);
+  clients[getIdx()].get(data);
 }

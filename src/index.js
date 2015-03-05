@@ -14,19 +14,6 @@ var discovery = new Discovery({
     ,host: '127.0.0.1'
 });
 
-var cluster = require('cluster')
-, zmq = require('zmq')
-, port = 'tcp://*:8009'
-, socket = zmq.socket('rep');
-
-socket.identity = 'server' + process.pid;
-socket.bind(port, function(err) {
-  if (err) {
-    throw err;
-  } 
-
-  socket.on('message', function(data) {
-    //console.log(socket.identity + ': received ' + data.toString());
-    socket.send(1);
-  });
-});
+var Server = require(__dirname + '/server');
+var server = new Server({host: "tcp://127.0.0.1:8009"});
+server.bind();

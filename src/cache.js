@@ -18,7 +18,7 @@ var map = new Map();
 * @constructor
 * @param {Number} size Cache size in bytes
 */
-var LRUCache = function(size) {
+function LRUCache(size) {
   if (!(this instanceof LRUCache)) {
       return new LRUCache(size);
   }
