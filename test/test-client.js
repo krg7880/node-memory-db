@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var Server = require(__dirname + '/../src/server');
-var Connection = require(__dirname + '/../src/connection');
+var Client = require(__dirname + '/../src/client');
 var zmq = require('zmq');
 var utils = require(__dirname + '/../src/utils');
 var options = {

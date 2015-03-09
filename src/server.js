@@ -45,6 +45,8 @@ Server.prototype.onBind = function(e) {
         process.nextTick(function() {
           this.socket.send(utils.bufferize(res));
         }.bind(this));
+        break;
+
       case 'ping':
         process.nextTick(function() {
           this.socket.send("pong");

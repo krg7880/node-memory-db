@@ -1,5 +1,4 @@
-var utils = require(__dirname + '/utils');
-var zmq = require('zmq');
+var Connections = require(__dirname + '/connections');
 
 var Client = function(options) {
   if (!(this instanceof Client)) {
@@ -7,42 +6,31 @@ var Client = function(options) {
   }
 
   this.options = options;
-  this.socket = zmq.socket('req');
-  this.socket.identity = options.identity;
-  this.socket.connect(options.host);
-  this.socket.on('message', this.onMessage.bind(this));
-
-  process.once('SIGINT', function() {
-    this.socket.close();
-  }.bind(this));
+  this.connections = new Connections(options);
 };
-
-Client.prototype.onMessage = function(data) {};
 
 Client.prototype.send = function(data) {
   this.socket.send(data);
 };
 
-Client.prototype.get = function(key) {
+Client.prototype.get = function(key, cb) {
   var obj = {
     cmd: 'get'
     ,args: [key]
   };
 
-  this.send(utils.bufferize(obj));
+  var connection = this.connections.get();
+  connection.send(utils.bufferize(obj), cb);
 };
 
-Client.prototype.put = Client.prototype.set = function(key, data, ttl) {
+Client.prototype.put = Client.prototype.set = function(key, data, ttl, cb) {
   var obj = {
     cmd: 'set'
     ,args: [key, data, ttl]
   };
 
-  this.send(utils.bufferize(obj));
+  var connection = this.connections.get();
+  connection.send(utils.bufferize(obj), cb);
 };
-
-Client.prototype.close = function() {
-  this.socket.close();
-}
 
 module.exports = Client;
