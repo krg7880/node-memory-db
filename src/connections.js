@@ -7,12 +7,12 @@ var Connection = require(__dirname + '/connection');
  * connections to the cache server.
  *
  * @param options
- * @returns {Connection}
+ * @returns {Connections}
  * @constructor
  */
 function Connections(options) {
-    if (!(this instanceof Connection)) {
-        return new Connection(options);
+    if (!(this instanceof Connections)) {
+        return new Connections(options);
     }
 
     if (typeof (options) === 'undefined') {
@@ -29,6 +29,10 @@ function Connections(options) {
 
     createConnections.call(this, this.options.size);
 }
+
+Connections.prototype.size = function() {
+    return this.length;
+};
 
 /**
  * Gets a connection object
@@ -71,7 +75,7 @@ function addToPool(connection) {
  * @param idx
  */
 function createConnection(idx) {
-    var connection = new Connection(this.options.config);
+    var connection = new Connection(this.options);
     connection.id = idx;
     connection.observe(function(connection) {
        addToPool.call(this, connection);
@@ -89,3 +93,5 @@ function createConnections(size) {
         createConnection.call(this, i);
     }
 }
+
+module.exports = Connections;

@@ -14,8 +14,8 @@ function fn() {
  * @constructor
  */
 function Connection(options) {
-    if (!(this instanceof Client)) {
-        return new Client(options);
+    if (!(this instanceof Connection)) {
+        return new Connection(options);
     }
 
     this.options = options;
@@ -24,9 +24,10 @@ function Connection(options) {
     this.socket.connect(options.host);
     this.socket.on('message', this.onMessage.bind(this));
     this.observer = options.observer || fn;
-    process.once('SIGINT', function() {
-        this.socket.close();
-    }.bind(this));
+
+    //process.once('SIGINT', function() {
+    //    this.socket.close();
+    //}.bind(this));
 }
 
 /**
