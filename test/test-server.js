@@ -5,21 +5,21 @@ var zmq = require('zmq');
 var utils = require(__dirname + '/../src/utils');
 
 describe('Server', function() {
-  console.log(options);
-  var server = new Server(options);
-  server.bind();
-
-  it('should be running', function(done) {
-    var client = zmq.socket('req');
-    client.identity = 'server_' + process.id;
-    client.connect(options.host);
-    client.on('message', function(data) {
-      expect(data.toString()).to.equal('pong');
-      client.close();
-      server.close();
-      done();
-    });
-
-    client.send(utils.bufferize({cmd: 'ping'}));
-  });
+  //console.log(options);
+  //var server = new Server(options);
+  //server.bind();
+  //
+  //it('should be running', function(done) {
+  //  var client = zmq.socket('req');
+  //  client.identity = 'server_' + process.id;
+  //  client.connect(options.host);
+  //  client.on('message', function(data) {
+  //    expect(data.toString()).to.equal('pong');
+  //    client.close();
+  //    server.close();
+  //    done();
+  //  });
+  //
+  //  client.send(utils.bufferize({cmd: 'ping'}));
+  //});
 });

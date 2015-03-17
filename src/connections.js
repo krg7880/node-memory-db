@@ -2,6 +2,11 @@
 
 var Connection = require(__dirname + '/connection');
 
+var LinkedList = require(__dirname + '/linkedlist');
+
+var _connections = new LinkedList();
+var _queue = new LinkedList();
+
 /**
  * Maintains a pool of active
  * connections to the cache server.
@@ -24,47 +29,40 @@ function Connections(options) {
     }
 
     this.options = options;
-    this.connections = [];
-    this.length = 0;
-
     createConnections.call(this, this.options.size);
 }
 
+Connections.prototype.destroy = function() {
+    while (!_connections.isEmpty()) {
+        var connection = _connections.shift();
+        connection.close();
+        connection = null;
+    }
+};
+
 Connections.prototype.size = function() {
-    return this.length;
+    return _connections.size();
 };
 
 /**
  * Gets a connection object
  * @returns {Connection}
  */
-Connections.prototype.get = function() {
-    var len = this.connections.length;
-    for (var i=0; i<len; i++) {
-        var c = this.connections[i];
-        if (!c.used) {
-            return c;
-        }
+Connections.prototype.get = function(fn) {
+    if (!_connections.isEmpty()) {
+        return fn(_connections.shift());
     }
 
-    createConnections.call(this, 1);
-    return this.get();
+    _queue.push(fn);
 };
 
-/**
- * Adds the connection object back
- * to the pool or remove it if we
- * have more connections established
- * than the specified size.
- *
- * @param connection
- */
-function addToPool(connection) {
-    if (connection.id > this.options.size) {
-        connection.close();
-        this.connections.splice(connection.id, 1);
-    } else {
-        this.connections[connection.id].used = false;
+function onObserve(connection) {
+    _connections.push(connection);
+
+    if (!_queue.isEmpty()) {
+        var cb = _queue.shift();
+
+        cb(_connections.shift());
     }
 }
 
@@ -74,14 +72,12 @@ function addToPool(connection) {
  *
  * @param idx
  */
-function createConnection(idx) {
+function createConnection() {
     var connection = new Connection(this.options);
-    connection.id = idx;
-    connection.observe(function(connection) {
-       addToPool.call(this, connection);
-    }.bind(this));
-    this.connections.push(connection);
-    this.length +=1;
+
+    connection.observe(onObserve.bind(this));
+
+    _connections.push(connection);
 }
 
 /**

@@ -1,4 +1,4 @@
-exports.stringify = function(val) {
+var stringify = exports.stringify = function(val) {
   var str = '';
   if (typeof (val) === 'object') {
       str = JSON.stringify(val);
@@ -12,7 +12,7 @@ exports.stringify = function(val) {
 };
 
 exports.bufferize = function bufferize(data) {
-  var str = exports.stringify(data);
+  var str = stringify(data);
   var buffer = new Buffer(Buffer.byteLength(str));
   buffer.write(str);
   return buffer;

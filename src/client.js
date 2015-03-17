@@ -1,4 +1,5 @@
 var Connections = require(__dirname + '/connections');
+var utils = require(__dirname + '/utils');
 
 var Client = function(options) {
   if (!(this instanceof Client)) {
@@ -19,8 +20,9 @@ Client.prototype.get = function(key, cb) {
     ,args: [key]
   };
 
-  var connection = this.connections.get();
-  connection.send(utils.bufferize(obj), cb);
+  this.connections.get(function(conn) {
+    conn.send(utils.bufferize(obj), cb);
+  });
 };
 
 Client.prototype.put = Client.prototype.set = function(key, data, ttl, cb) {
@@ -29,8 +31,9 @@ Client.prototype.put = Client.prototype.set = function(key, data, ttl, cb) {
     ,args: [key, data, ttl]
   };
 
-  var connection = this.connections.get();
-  connection.send(utils.bufferize(obj), cb);
+  this.connections.get(function(conn) {
+    conn.send(utils.bufferize(obj), cb);
+  });
 };
 
 module.exports = Client;

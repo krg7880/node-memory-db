@@ -1,6 +1,5 @@
 'use strict';
 
-var _private = new require(__dirname + '/private')();
 var Item = require(__dirname + '/item');
 
 /**
@@ -23,9 +22,9 @@ function LRUCache(size) {
       return new LRUCache(size);
   }
 
-  _private(this)._maxCacheSize = size || DEFAULT_CACHE_SIZE;
-  _private(this)._length = 0;
-  _private(this)._cacheSize = 0;
+  this._maxCacheSize = size || DEFAULT_CACHE_SIZE;
+  this._length = 0;
+  this._cacheSize = 0;
 };
 
 /**
@@ -57,7 +56,7 @@ LRUCache.prototype.replaceLRU = function(key, item, ttl) {
       map.delete(_key);
   }
 
-  map.set(key, this.createItem(item, ttl));
+  return map.set(key, this.createItem(item, ttl));
 }
 
 
@@ -69,7 +68,7 @@ LRUCache.prototype.replaceLRU = function(key, item, ttl) {
 */
 LRUCache.prototype.put = LRUCache.prototype.set = function(key, item, ttl) {
   if (map.has(key)) {
-      return;
+      return true;
   }
 
   if (this.isFull()) {
@@ -94,6 +93,7 @@ LRUCache.prototype.get = function(key) {
   var item = map.get(key);
 
   if (!item) return null;
+
   item.accessCount += 1;
 
   return item;
