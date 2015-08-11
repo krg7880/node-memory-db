@@ -17,7 +17,7 @@ function Server(options) {
 }
 
 Server.prototype.bind = function() {
-  this.socket.bindSync(this.options.host);
+  this.socket.bindSync(this.options.host + ':' + this.options.port);
   this.onBind();
 };
 
@@ -27,33 +27,37 @@ Server.prototype.close = function() {
 
 Server.prototype.get = function(client, obj) {
   var packet = null;
-
-  var res = cache.get(obj.args[0]);
+  var res = cache.get(obj[0]);
 
   if (typeof(res) === 'undefined') {
-    packet = utils.bufferize({error: new Error("Item not found"), results: null, id: obj.__id});
+    packet = 'error:NOT_FOUND';
   } else {
-    packet = utils.bufferize({error: null, results: res,  id: obj.__id});
+    packet = 'null:' + res
   }
 
   this.socket.send([client, packet]);
 };
 
-Server.prototype.put = function(client, obj) {
+/**
+ * 'cmd' + key + ':' + data + ':' + ttl
+ */
+Server.prototype.put = function(client, data) {
+
   var packet = null;
-  var res = cache[obj.cmd].apply(cache, obj.args);
+
+  var res = cache.put(data);
 
   if (!res) {
-    packet = utils.bufferize({error: new Error("Unable to add item to cache"), results: null, id: obj.__id});
+    packet = "error:Unable to add item to cache:" //+ obj.__id;
   } else {
-    packet = utils.bufferize({error: null, results: true,  id: obj.__id});
+    packet = "null:1:";
   }
 
   this.socket.send([client, packet]);
 };
 
 Server.prototype.pong = function(client) {
-  this.socket.send([client, utils.bufferize( "pong")]);
+  this.socket.send([client, utils.bufferize("pong")]);
 };
 
 Server.prototype.unknownCommand = function(client) {
@@ -65,20 +69,23 @@ Server.prototype.onBind = function(e) {
     throw e;
   }
 
+  var self = this;
+
   // listen for request from the client
   this.socket.on('message', function(client, data) {
-    var obj = JSON.parse(data.toString());
+    var split = data.toString().split(':');
+    var cmd = split.shift();
 
-    if (obj.cmd === 'get') {
-      this.get(client, obj);
-    } else if (obj.cmd === 'put' || obj.cmd === 'set') {
-      this.put(client, obj);
-    } else if (obj.cmd === 'ping') {
-      this.pong(client, obj);
+    if (cmd === 'get') {
+      self.get(client, split);
+    } else if (cmd === 'put' || cmd === 'set') {
+      self.put(client, split);
+    } else if (cmd === 'ping') {
+      self.pong(client, split);
     } else {
-      this.unknownCommand(client)
+      self.unknownCommand(client)
     }
-  }.bind(this));
+  });
 }
 
 module.exports = Server;

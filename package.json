@@ -12,9 +12,11 @@
     "chai": "^2.1.1",
     "gulp": "^3.8.11",
     "gulp-mocha": "^2.0.0",
+    "memcached": "^2.1.0",
     "zmq": "^2.10.0"
   },
   "dependencies": {
+    "binary-parser": "^1.1.5",
     "generic-pool": "^2.1.1",
     "nanomsg": "^0.4.1",
     "node-discovery": "^0.2.1-1",

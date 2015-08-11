@@ -1,0 +1,23 @@
+{
+	"router": {
+		"port": ":3001",
+		"protocol": "tcp://",
+		"host": "127.0.0.1"
+	},
+	"dealer": {
+		"port": "",
+		"protocol": "ipc://",
+		"host": "dealer.ipc"
+	},
+	"rep": {
+		"connection": {
+			"endpoint": "dealer"
+		}
+	},
+	"req": {
+		"connection": {
+			"endpoint": "router"
+		}
+	}
+}
+
